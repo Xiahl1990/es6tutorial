@@ -95,6 +95,8 @@ function init_sidebar_section() {
             }
             location.hash = menu[i + 1];
         });
+        // create_banner($(ditto.sidebar_id).find('p:nth-child(3)').first());
+
     }, "text").fail(function() {
         alert("Opps! can't find the sidebar file to display!");
     });
@@ -139,7 +141,7 @@ function init_back_to_top_button() {
 
 function goTop(e) {
   if(e) e.preventDefault();
-  $('html body').animate({
+  $('html, body').animate({
     scrollTop: 0
   }, 200);
   history.pushState(null, null, '#' + location.hash.split('#')[1]);
@@ -207,6 +209,30 @@ function li_create_linkage(li_tag, header_level) {
   });
 }
 
+function create_banner(element) {
+  // 2020年3月22日
+  var deadline = new Date(2020, 2, 22);
+  if (deadline - (new Date()) < 0) return;
+
+  var styleStr = [
+    'margin: 1em 0',
+    'padding: 1em',
+    'background-color: #c4e0e1',
+    'border-radius: 5px',
+    'font-size: 90%',
+    // 'font-size: 75%',
+    // 'width: 210px',
+    'color: #333333'
+  ].join(';');
+
+  var text = '【课程学习】' +
+    '拿不到 Offer 退全款，廖雪峰的' +
+    '<span style="color: #4682BE;">《Web 全栈架构师》</span>开班了！';
+
+  var banner = $('<a href="https://datayi.cn/w/noqwyzdR" style="color: #333333;" target="_blank"><div style="' + styleStr + '">' + text + '</div></a>')
+    .insertAfter(element);
+}
+
 function create_page_anchors() {
   // create page anchors by matching li's to headers
   // if there is a match, create click listeners
@@ -243,6 +269,9 @@ function create_page_anchors() {
         .insertAfter('#content h1')
         .addClass('content-toc')
         .attr('id', 'content-toc');
+
+      create_banner(ul_tag);
+
       for (var j = 0; j < headers.length; j++) {
         var li_tag = $('<li></li>').html('<a href="#' + location.hash.split('#')[1] + '#' + headers[j] + '">' + headers[j] + '</a>');
         ul_tag.append(li_tag);
@@ -256,7 +285,7 @@ function normalize_paths() {
   // images
   $(ditto.content_id + " img").map(function() {
     var src = $(this).attr("src").replace("./", "");
-    if ($(this).attr("src").slice(0, 5) !== "http") {
+    if ($(this).attr("src").slice(0, 4) !== "http") {
       var pathname = location.pathname.substr(0, location.pathname.length - 1);
       var url = location.hash.replace("#", "");
 
@@ -285,6 +314,14 @@ function show_loading() {
   }, 2000);
 
   return loading;
+}
+
+function statistics() {
+  var _hmt = _hmt || [];
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?519d72adb78a0bf66de7bae18e994322";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
 }
 
 function router() { 
@@ -318,6 +355,9 @@ function router() {
 
   // otherwise get the markdown and render it
   var loading = show_loading();
+
+  statistics();
+
   $.get(path, function(data) {
     $(ditto.error_id).hide();
     $(ditto.content_id).html(marked(data) + disqusCode);
@@ -340,14 +380,14 @@ function router() {
       window.disqus_shortname = 'es6';
       window.disqus_identifier = (location.hash ? location.hash.replace("#", "") : 'READEME');
       window.disqus_title = $(ditto.content_id + " h1").text();
-      window.disqus_url = 'http://es6.ruanyifeng.com/' + (location.hash ? location.hash.replace("#", "") : 'README');
+      window.disqus_url = 'https://es6.ruanyifeng.com/' + (location.hash ? location.hash.replace("#", "") : 'README');
 
       // http://docs.disqus.com/developers/universal/
       (function() {
         var dsq = document.createElement('script');
         dsq.type = 'text/javascript';
         dsq.async = true;
-        dsq.src = 'http://' + window.disqus_shortname + '.disqus.com/embed.js';
+        dsq.src = 'https://' + window.disqus_shortname + '.disqus.com/embed.js';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
       })();
     })();
